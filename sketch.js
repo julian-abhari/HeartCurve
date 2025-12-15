@@ -1,15 +1,14 @@
 // Array to store the points of the heart shape
 let heart = [];
 
-// Variable to control the angle for the heart shape calculation
-let a = 0;
-
 // The setup function is called once when the program starts
 function setup() {
   // Create a canvas of 800x800 pixels
   createCanvas(800, 800);
   // Set the pixel density to 2 for high-resolution displays
   pixelDensity(2);
+  // Setup the heart shape
+  setupHeart();
 }
 
 // The draw function is called continuously in a loop
@@ -36,20 +35,17 @@ function draw() {
   }
   // End drawing the shape
   endShape();
+}
 
-  // Radius for the heart shape calculation
-  let r = 10;
-  // Calculate the x-coordinate of the next point in the heart shape
-  let x = r * 16 * pow(sin(a), 3);
-  // Calculate the y-coordinate of the next point in the heart shape
-  let y = -r * (13 * cos(a) - 5 * cos(2 * a) - 2 * cos(3 * a) - cos(4 * a));
-  // Add the new point to the heart array
-  heart.push(createVector(x, y));
-  a += 0.02;
-
-  for (var i = 0; i < vehicles.length; i += 1) {
-    vehicles[i].applyForce(vehicles[i].arrive());
-    vehicles[i].update();
-    vehicles[i].show();
+function setupHeart() {
+  for (let a = 0; a < TWO_PI; a += 0.02) {
+    // Radius for the heart shape calculation
+    let r = 10;
+    // Calculate the x-coordinate of the next point in the heart shape
+    let x = r * 16 * pow(sin(a), 3);
+    // Calculate the y-coordinate of the next point in the heart shape
+    let y = -r * (13 * cos(a) - 5 * cos(2 * a) - 2 * cos(3 * a) - cos(4 * a));
+    // Add the new point to the heart array
+    heart.push(createVector(x, y));
   }
 }
