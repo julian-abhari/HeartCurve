@@ -1,6 +1,12 @@
 // Array to store the points of the heart shape
 let heart = [];
 
+// Array to store the vehicles
+let vehicles = [];
+
+// Increment for heart radius
+let radiusIncrement = 0.02;
+
 // The setup function is called once when the program starts
 function setup() {
   // Create a canvas of 800x800 pixels
@@ -9,6 +15,11 @@ function setup() {
   pixelDensity(2);
   // Setup the heart shape
   setupHeart();
+
+  // Create vehicles such that it matches the heart shape
+  for (let a = 0; a < TWO_PI; a += radiusIncrement) {
+    vehicles.push(new Vehicle(random(width), random(height)));
+  }
 }
 
 // The draw function is called continuously in a loop
@@ -25,7 +36,7 @@ function draw() {
   // Set the stroke weight to 4 pixels
   strokeWeight(4);
   // Set the fill color to a shade of purple
-  fill(150, 0, 100);
+  // fill(150, 0, 100);
 
   // Begin drawing a shape
   beginShape();
@@ -35,10 +46,17 @@ function draw() {
   }
   // End drawing the shape
   endShape();
+
+  // Update behavior and display vehicles
+  for (let i = 0; i < vehicles.length; i++) {
+    vehicles[i].update();
+    vehicles[i].display();
+    vehicles[i].applyBehaviors(vehicles, heart[i], createVector(mouseX, mouseY));
+  }
 }
 
 function setupHeart() {
-  for (let a = 0; a < TWO_PI; a += 0.02) {
+  for (let a = 0; a < TWO_PI; a += radiusIncrement) {
     // Radius for the heart shape calculation
     let r = 10;
     // Calculate the x-coordinate of the next point in the heart shape

@@ -12,13 +12,18 @@ class Vehicle {
     this.acceleration.add(force);
   }
 
-  applyBehaviors(vehicles) {
+  applyBehaviors(vehicles, target, avoidingTarget) {
     var separateForce = this.separate(vehicles);
-    var seekForce = this.seek(createVector(mouseX, mouseY));
-    separateForce.mult(2);
-    seekForce.mult(1);
+    var seekForce = this.seek(target);
+    var fleeForce = this.flee(avoidingTarget);
+
+    separateForce.mult(2); // Weighted, should add dynamic weight later
+    seekForce.mult(1); // Weighted, should add dynamic weight later
+    fleeForce.mult(1);
+
     this.applyForce(separateForce);
     this.applyForce(seekForce);
+    this.applyForce(fleeForce);
   }
 
   // Method that calculuates a steering force towards a target
@@ -32,6 +37,22 @@ class Vehicle {
     steeringForce.limit(this.maxForce);
 
     return steeringForce;
+  }
+
+  flee(target) {
+    var desired = p5.Vector.sub(target, this.position);
+    var distance = desired.mag();
+
+    if (distance < 50) {
+      desired.setMag(this.maxSpeed);
+      desired.mult(-1);
+
+      var steeringForce = p5.Vector.sub(desired, this.velocity);
+      steeringForce.limit(this.maxForce);
+
+      return steeringForce;
+    }
+    return createVector(0, 0);
   }
 
   separate(vehicles) {
@@ -69,7 +90,8 @@ class Vehicle {
   }
 
   display() {
-    fill(175);
+    // Set the fill color to a shade of purple
+    fill(150, 0, 100);
     stroke(0);
     push();
     translate(this.position.x, this.position.y);
