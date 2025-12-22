@@ -18,7 +18,7 @@ function setup() {
 
   // Create vehicles such that it matches the heart shape
   for (let a = 0; a < TWO_PI; a += radiusIncrement) {
-    vehicles.push(new Vehicle(random(width), random(height)));
+    vehicles.push(new Vehicle(random(-width / 2, width / 2), random(-height / 2, height / 2)));
   }
 }
 
@@ -39,19 +39,20 @@ function draw() {
   // fill(150, 0, 100);
 
   // Begin drawing a shape
-  beginShape();
+  // beginShape();
   // Loop through each point in the heart array and create a vertex
-  for (let vector of heart) {
-    vertex(vector.x, vector.y);
-  }
+  // for (let vector of heart) {
+  //   vertex(vector.x, vector.y);
+  // }
   // End drawing the shape
-  endShape();
+  // endShape();
 
   // Update behavior and display vehicles
   for (let i = 0; i < vehicles.length; i++) {
     vehicles[i].update();
     vehicles[i].display();
-    vehicles[i].applyBehaviors(vehicles, heart[i], createVector(mouseX, mouseY));
+    vehicles[i].applyBehaviors(vehicles, heart[i]);
+    vehicles[i].applyAvoidTarget(createVector(mouseX - width / 2, mouseY - height / 2));
   }
 }
 

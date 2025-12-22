@@ -4,7 +4,7 @@ class Vehicle {
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
     this.radius = 12;
-    this.maxSpeed = 3;
+    this.maxSpeed = 5;
     this.maxForce = 0.2;
   }
 
@@ -12,17 +12,20 @@ class Vehicle {
     this.acceleration.add(force);
   }
 
-  applyBehaviors(vehicles, target, avoidingTarget) {
+  applyBehaviors(vehicles, target) {
     var separateForce = this.separate(vehicles);
     var seekForce = this.seek(target);
-    var fleeForce = this.flee(avoidingTarget);
 
     separateForce.mult(2); // Weighted, should add dynamic weight later
     seekForce.mult(1); // Weighted, should add dynamic weight later
-    fleeForce.mult(1);
 
     this.applyForce(separateForce);
     this.applyForce(seekForce);
+  }
+
+  applyAvoidTarget(target) {
+    var fleeForce = this.flee(target);
+    fleeForce.mult(-5);
     this.applyForce(fleeForce);
   }
 
@@ -43,9 +46,9 @@ class Vehicle {
     var desired = p5.Vector.sub(target, this.position);
     var distance = desired.mag();
 
-    if (distance < 50) {
+    if (distance < 30) {
       desired.setMag(this.maxSpeed);
-      desired.mult(-1);
+      desired.mult(1);
 
       var steeringForce = p5.Vector.sub(desired, this.velocity);
       steeringForce.limit(this.maxForce);
@@ -91,8 +94,8 @@ class Vehicle {
 
   display() {
     // Set the fill color to a shade of purple
-    fill(150, 0, 100);
-    stroke(0);
+    fill(150, 0, 100, 200);
+    noStroke();
     push();
     translate(this.position.x, this.position.y);
     ellipse(0, 0, this.radius, this.radius);
