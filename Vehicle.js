@@ -3,9 +3,9 @@ class Vehicle {
     this.position = createVector(x, y);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
-    this.radius = 12;
-    this.maxSpeed = 5;
-    this.maxForce = 0.2;
+    this.radius = 4;
+    this.maxSpeed = 6;
+    this.maxForce = 0.5;
   }
 
   applyForce(force) {
@@ -94,7 +94,7 @@ class Vehicle {
 
   display() {
     // Set the fill color to a shade of purple
-    fill(150, 0, 100, 200);
+    fill(255, 150);
     noStroke();
     push();
     translate(this.position.x, this.position.y);
