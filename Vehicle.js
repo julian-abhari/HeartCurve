@@ -3,7 +3,7 @@ class Vehicle {
     this.position = createVector(x, y);
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
-    this.radius = 4;
+    this.radius = 2;
     this.maxSpeed = 6;
     this.maxForce = 0.5;
   }

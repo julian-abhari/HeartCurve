@@ -1,14 +1,17 @@
 // Array to store the points of the heart shape
-let heart = [];
+let outerHeart = [];
+let innerHeart = [];
+// Maximum angle for heart shape calculation
+var maxAngle;
+// Increment for heart radius
+let radiusIncrement = 0.02;
 
 // Array to store the vehicles
 let vehicles = [];
 
-// Increment for heart radius
-let radiusIncrement = 0.02;
-
-// Maximum angle for heart shape calculation
-var maxAngle;
+// Grass blade variables
+let grassBlades = [];
+let grassLength = 50;
 
 // Flowfield variables
 var gridScale = 15;
@@ -30,13 +33,18 @@ function setup() {
 	flowfield = new Array(columns * rows);
 
   // Initialize Max Angle
-  maxAngle = 4 * TWO_PI;
+  maxAngle = 2 * TWO_PI;
   // Setup the heart shape
-  setupHeart();
+  outerHeart = setupHeart(outerHeart, 15);
+  innerHeart = setupHeart(innerHeart, 10);
 
   // Create vehicles such that it matches the heart shape
   for (let a = 0; a < maxAngle; a += radiusIncrement) {
     vehicles.push(new Vehicle(random(-width / 2, width / 2), random(-height / 2, height / 2)));
+  }
+
+  for (let i = 0; i < innerHeart.length; i++) {
+    grassBlades.push(new Grass(innerHeart[i].x, innerHeart[i].y, grassLength));
   }
 }
 
@@ -54,7 +62,7 @@ function draw() {
   for (let i = 0; i < vehicles.length; i++) {
     vehicles[i].display();
     vehicles[i].update();
-    vehicles[i].applyBehaviors(vehicles, heart[i]);
+    vehicles[i].applyBehaviors(vehicles, outerHeart[i]);
     vehicles[i].applyAvoidTarget(createVector(mouseX - width / 2, mouseY - height / 2));
 
     // Calculate vehicle's flowfield index by the vehicle's position
@@ -66,13 +74,16 @@ function draw() {
     let index = col + row * columns;
     // Apply the flowfield vector as a force to the vehicle
     vehicles[i].applyForce(flowfield[index]);
+
+    // Update grass blades
+    grassBlades[i].show(vehicles[i].position);
   }
 }
 
-function setupHeart() {
+function setupHeart(heart, radius) {
   for (let a = 0; a < maxAngle; a += radiusIncrement) {
     // Radius for the heart shape calculation
-    let r = 15;
+    let r = radius;
     // Calculate the x-coordinate of the next point in the heart shape
     let x = r * 16 * pow(sin(a), 3);
     // Calculate the y-coordinate of the next point in the heart shape
@@ -80,6 +91,7 @@ function setupHeart() {
     // Add the new point to the heart array
     heart.push(createVector(x, y));
   }
+  return heart
 }
 
 function calculateFlowField(flowfield, spatialIncrement,  time, timeIncrement) {
@@ -93,7 +105,7 @@ function calculateFlowField(flowfield, spatialIncrement,  time, timeIncrement) {
 			var perlinNoise = noise(xOffset, yOffset, time);
 			var angle = map(perlinNoise, 0, 1, 0, TWO_PI);
 			var vector = p5.Vector.fromAngle(angle);
-			vector.setMag(0.25);
+			vector.setMag(0.35);
 			flowfield[index] = vector;
 			yOffset += spatialIncrement;
 		}
