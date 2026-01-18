@@ -1,4 +1,4 @@
-class Grass {
+class Lace {
   constructor(x, y, length) {
     this.length = length;
     this.position = createVector(x, y);

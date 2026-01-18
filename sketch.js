@@ -4,21 +4,19 @@ let innerHeart = [];
 // Maximum angle for heart shape calculation
 var maxAngle;
 // Increment for heart radius
-let radiusIncrement = 0.02;
+let radiusIncrement = 0.04;
 
 // Array to store the vehicles
-let vehicles = [];
+let vehicles1 = [];
+let vehicles2 = [];
 
-// Grass blade variables
-let grassBlades = [];
-let grassLength = 50;
+// Lace blade variables
+let laceNet = [];
+let laceLength = 80;
 
-// Flowfield variables
-var gridScale = 15;
-var flowfield;
+// Time variables
 var time = 0;
-var timeIncrement = 0.05;
-var spatialIncrement = 0.06;
+var timeIncrement = 0.005;
 
 // The setup function is called once when the program starts
 function setup() {
@@ -27,24 +25,20 @@ function setup() {
   // Set the pixel density to 2 for high-resolution displays
   pixelDensity(2);
 
-  // Setup flowfield array with the element amount equal to total cells
-  columns = floor(width / gridScale);
-	rows = floor(height / gridScale);
-	flowfield = new Array(columns * rows);
-
   // Initialize Max Angle
-  maxAngle = 2 * TWO_PI;
+  maxAngle = 1 * TWO_PI;
   // Setup the heart shape
-  outerHeart = setupHeart(outerHeart, 15);
-  innerHeart = setupHeart(innerHeart, 10);
+  outerHeart = setupHeart(outerHeart, 20);
+  innerHeart = setupHeart(innerHeart, 8);
 
   // Create vehicles such that it matches the heart shape
   for (let a = 0; a < maxAngle; a += radiusIncrement) {
-    vehicles.push(new Vehicle(random(-width / 2, width / 2), random(-height / 2, height / 2)));
+    vehicles1.push(new Vehicle(random(-width / 2, width / 2), random(-height / 2, height / 2)));
+    vehicles2.push(new Vehicle(random(-width / 2, width / 2), random(-height / 2, height / 2)));
   }
 
-  for (let i = 0; i < innerHeart.length; i++) {
-    grassBlades.push(new Grass(innerHeart[i].x, innerHeart[i].y, grassLength));
+  for (let i = 0; i < vehicles2.length; i++) {
+    laceNet.push(new Lace(vehicles2[i].position.x, vehicles2[i].position.y, laceLength));
   }
 }
 
@@ -55,28 +49,29 @@ function draw() {
   // Move the origin to the center of the canvas
   translate(width / 2, height / 2);
 
-  // Calculate the vectors in the flowfield based on time
-  calculateFlowField(flowfield, spatialIncrement, time, timeIncrement);
+  // Update time
+  time += timeIncrement;
 
   // Update behavior and display vehicles
-  for (let i = 0; i < vehicles.length; i++) {
-    vehicles[i].display();
-    vehicles[i].update();
-    vehicles[i].applyBehaviors(vehicles, outerHeart[i]);
-    vehicles[i].applyAvoidTarget(createVector(mouseX - width / 2, mouseY - height / 2));
+  let allVehicles = vehicles1.concat(vehicles2);
+  for (let i = 0; i < vehicles1.length; i++) {
+    // Update vehicle 1
+    vehicles1[i].update();
+    vehicles1[i].applyBehaviors(allVehicles, Math.floor(time % 2) == 0 ? outerHeart[i] : innerHeart[i]);
+    vehicles1[i].applyAvoidTarget(createVector(mouseX - width / 2, mouseY - height / 2));
 
-    // Calculate vehicle's flowfield index by the vehicle's position
-    // Vehicle's column position normalized to the grid size
-    let col = Math.floor((vehicles[i].position.x + (width / 2)) / gridScale);
-    // Vehicle's row position normalized to the grid size
-    let row = Math.floor((vehicles[i].position.y + (height / 2)) / gridScale);
-    // Calculate the index in the flowfield array
-    let index = col + row * columns;
-    // Apply the flowfield vector as a force to the vehicle
-    vehicles[i].applyForce(flowfield[index]);
+    // Update vehicle 2
+    vehicles2[i].update();
+    vehicles2[i].applyBehaviors(allVehicles, Math.floor(time % 2) == 0 ? innerHeart[i] : outerHeart[i]);
+    vehicles2[i].applyAvoidTarget(createVector(mouseX - width / 2, mouseY - height / 2));
 
-    // Update grass blades
-    grassBlades[i].show(vehicles[i].position);
+    // Update lace blades
+    laceNet[i].position.set(vehicles2[i].position);
+    laceNet[i].show(vehicles1[i].position);
+
+    // Display
+    vehicles1[i].display();
+    vehicles2[i].display();
   }
 }
 
@@ -94,7 +89,7 @@ function setupHeart(heart, radius) {
   return heart
 }
 
-function calculateFlowField(flowfield, spatialIncrement,  time, timeIncrement) {
+function calculateFlowField(flowfield, spatialIncrement,  time) {
   // Iterate through the flowfield columns
   var xOffset = 0;
 	for (var x = 0; x < columns; x += 1) {
@@ -111,5 +106,4 @@ function calculateFlowField(flowfield, spatialIncrement,  time, timeIncrement) {
 		}
 		xOffset += spatialIncrement;
 	}
-	time += timeIncrement;
 }
