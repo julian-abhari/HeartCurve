@@ -26,7 +26,7 @@ class Segment {
   }
 
   show() {
-    stroke(255, this.segmentNumber + 10);
+    stroke(255, this.segmentNumber);
     strokeWeight(3);
     line(this.position.x, this.position.y, this.secondPos.x, this.secondPos.y);
   }

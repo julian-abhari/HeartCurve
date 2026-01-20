@@ -4,8 +4,8 @@ class Vehicle {
     this.velocity = createVector(0, 0);
     this.acceleration = createVector(0, 0);
     this.radius = 3;
-    this.maxSpeed = 2;
-    this.maxForce = 0.2;
+    this.maxSpeed = 5;
+    this.maxForce = 1;
   }
 
   applyForce(force) {

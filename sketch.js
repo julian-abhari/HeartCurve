@@ -4,7 +4,7 @@ let innerHeart = [];
 // Maximum angle for heart shape calculation
 var maxAngle;
 // Increment for heart radius
-let radiusIncrement = 0.04;
+let radiusIncrement = 0.02;
 
 // Array to store the vehicles
 let vehicles1 = [];
@@ -12,7 +12,7 @@ let vehicles2 = [];
 
 // Lace blade variables
 let laceNet = [];
-let laceLength = 80;
+let laceLength = 90;
 
 // Time variables
 var time = 0;
@@ -38,6 +38,10 @@ function setup() {
   }
 
   for (let i = 0; i < vehicles2.length; i++) {
+    let xOffset = width / 2;
+    let yOffset = height / 2;
+    // Calculate the distance between the points in outerHeart and innerHeart at the current index
+    let distance = dist(outerHeart[i].x - xOffset, outerHeart[i].y - yOffset, innerHeart[i].x - xOffset, innerHeart[i].y - yOffset);
     laceNet.push(new Lace(vehicles2[i].position.x, vehicles2[i].position.y, laceLength));
   }
 }
