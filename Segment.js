@@ -25,10 +25,16 @@ class Segment {
     this.position = p5.Vector.add(target, direction);
   }
 
-  show() {
-    stroke(255, this.segmentNumber);
-    strokeWeight(3);
-    line(this.position.x, this.position.y, this.secondPos.x, this.secondPos.y);
+  show(canvas) {
+    if (canvas) {
+      canvas.stroke(255, this.segmentNumber);
+      canvas.strokeWeight(this.length);
+      canvas.line(this.position.x, this.position.y, this.secondPos.x, this.secondPos.y);
+    } else {
+      stroke(255, this.segmentNumber);
+      strokeWeight(this.length);
+      line(this.position.x, this.position.y, this.secondPos.x, this.secondPos.y);
+    }
   }
 
   update() {

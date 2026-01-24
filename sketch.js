@@ -38,21 +38,14 @@ function setup() {
   }
 
   for (let i = 0; i < vehicles2.length; i++) {
-    let xOffset = width / 2;
-    let yOffset = height / 2;
     // Calculate the distance between the points in outerHeart and innerHeart at the current index
-    let distance = dist(outerHeart[i].x - xOffset, outerHeart[i].y - yOffset, innerHeart[i].x - xOffset, innerHeart[i].y - yOffset);
-    laceNet.push(new Lace(vehicles2[i].position.x, vehicles2[i].position.y, laceLength));
+    let distance = dist(outerHeart[i].x, outerHeart[i].y, innerHeart[i].x, innerHeart[i].y);
+    laceNet.push(new Lace(vehicles2[i].position.x, vehicles2[i].position.y, distance + 20));
   }
 }
 
 // The draw function is called continuously in a loop
 function draw() {
-  // Set the background color to black
-  background(0);
-  // Move the origin to the center of the canvas
-  translate(width / 2, height / 2);
-
   // Update time
   time += timeIncrement;
 
@@ -71,11 +64,26 @@ function draw() {
 
     // Update lace blades
     laceNet[i].position.set(vehicles2[i].position);
-    laceNet[i].show(vehicles1[i].position);
+  }
 
-    // Display
-    vehicles1[i].display();
-    vehicles2[i].display();
+  // Draw the scene
+  drawScene();
+}
+
+function drawScene(canvas) {
+  if (canvas) {
+    canvas.background(0);
+    canvas.translate(width / 2, height / 2);
+  } else {
+    background(0);
+    translate(width / 2, height / 2);
+  }
+
+  // Display vehicles and lace
+  for (let i = 0; i < vehicles1.length; i++) {
+    laceNet[i].show(vehicles1[i].position, canvas);
+    vehicles1[i].display(canvas);
+    vehicles2[i].display(canvas);
   }
 }
 
@@ -110,4 +118,15 @@ function calculateFlowField(flowfield, spatialIncrement,  time) {
 		}
 		xOffset += spatialIncrement;
 	}
+}
+
+function mousePressed() {
+  // Create a temporary SVG canvas
+  let svg = createGraphics(width, height, SVG);
+  // Draw the scene on the SVG canvas
+  drawScene(svg);
+  // Save the SVG canvas
+  svg.save("heart.svg");
+  // Remove the temporary canvas
+  svg.remove();
 }

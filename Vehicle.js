@@ -92,13 +92,21 @@ class Vehicle {
     this.acceleration.mult(0);
   }
 
-  display() {
-    // Set the fill color to a shade of purple
-    fill(255, 200);
-    noStroke();
-    push();
-    translate(this.position.x, this.position.y);
-    ellipse(0, 0, this.radius, this.radius);
-    pop();
+  display(canvas) {
+    if (canvas) {
+      canvas.fill(255, 200);
+      canvas.noStroke();
+      canvas.push();
+      canvas.translate(this.position.x, this.position.y);
+      canvas.ellipse(0, 0, this.radius, this.radius);
+      canvas.pop();
+    } else {
+      fill(255, 200);
+      noStroke();
+      push();
+      translate(this.position.x, this.position.y);
+      ellipse(0, 0, this.radius, this.radius);
+      pop();
+    }
   }
 }
